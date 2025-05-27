@@ -1,0 +1,25 @@
+{
+  "name": "guinetik.com",
+  "version": "1.0.0",
+  "description": "Personal Webiste",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "deploy": "gh-pages --dist dist --branch gh-pages"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "vite": "^6.0.0",
+    "vite-plugin-solid": "^2.11.6"
+  },
+  "dependencies": {
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.15.3",
+    "louvain-algorithm": "^1.0.4",
+    "solid-js": "^1.9.5"
+  }
+}

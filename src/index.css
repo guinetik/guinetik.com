@@ -1,0 +1,647 @@
+@font-face {
+  font-family: "Terminal";
+  src: url("https://fonts.cdnfonts.com/css/sf-mono") format("opentype");
+}
+
+/*
+canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+}
+*/
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+/* Custom scrollbar */
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 42, 56, 0.5); /* Dark teal with transparency */
+  border-radius: 5px;
+  border: 1px solid rgba(0, 200, 200, 0.2); /* Subtle neon border */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00c8c8; /* Bright teal */
+  border-radius: 5px;
+  border: 1px solid rgba(0, 255, 255, 0.5); /* Glowing edge */
+  box-shadow: 
+    0 0 5px rgba(0, 200, 200, 0.5), /* Inner glow */
+    inset 0 0 5px rgba(0, 255, 255, 0.3); /* Outer glow */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ffff; /* Brighter when hovered */
+  box-shadow: 
+    0 0 8px rgba(0, 255, 255, 0.8),
+    inset 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+/* For Firefox (version 64+) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00c8c8 #002a38;
+}
+
+/* For Internet Explorer (if needed) */
+body {
+  scrollbar-base-color: #002a38;
+  scrollbar-face-color: #00c8c8;
+  scrollbar-3dlight-color: #002a38;
+  scrollbar-highlight-color: #002a38;
+  scrollbar-track-color: #002a38;
+  scrollbar-arrow-color: #00c8c8;
+  scrollbar-shadow-color: #002a38;
+  scrollbar-dark-shadow-color: #002a38;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: #001a23;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: "Terminal", monospace;
+}
+
+.terminal-svg {
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+}
+
+.terminal-container {
+  position: relative;
+  width: auto; /* Let height determine width */
+  height: 80vh; /* Prioritize vertical space */
+  max-height: 800px; /* Optional maximum */
+  aspect-ratio: 194/125; /* Original SVG ratio */
+  margin: 2rem auto;
+}
+
+.terminal-content {
+  /* Calculate position based on container's scaled dimensions */
+  position: absolute;
+  top: 8.4%; /* 10.5/125 ≈ 8.4% */
+  left: 11.6%; /* 22.5/194 ≈ 11.6% */
+  width: 56.2%; /* 109/194 ≈ 56.2% */
+  height: 62.8%; /* 78.5/125 ≈ 62.8% */
+  
+  color: #9eff9e;
+  font-family: "Terminal", monospace;
+  font-size: min(1.3rem, 2.5vh); /* Vertical-based sizing */
+  line-height: 1.4;
+  background-color: #001a23;
+  border: 0.4vh solid #00c8c8; /* Vertical-based border */
+  border-radius: 5%; /* Simplified proportional radius */
+  overflow: hidden;
+  box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2);
+  text-shadow: 0 0 5px rgba(158, 255, 158, 0.7);
+}
+
+.content-wrapper {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  padding: 1.5%;
+  box-sizing: border-box;
+}
+
+.home-screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.guinetik-screen {
+  height: 100%;
+  display: flex;
+  overflow-y: auto;
+}
+
+.demos-screen {
+  overflow-y: auto;
+  width: 100%;
+}
+
+.project-screen {
+  overflow-y: auto;
+  width: 100%;
+}
+
+h1 {
+  margin: 10px;
+  margin-bottom: 0;
+}
+
+.guinetik-screen aside:not(.active) {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.guinetik-screen aside.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.guinetik-screen aside {
+  float: right;
+  margin-top: 0;
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-left: 2rem;
+  margin-right: .5rem;
+  display: inline-block;
+  position: relative;
+  animation: floatText 6s ease-in-out infinite;
+  text-shadow: 0 0 8px rgba(255,255,255,0.3);
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+@keyframes floatText {
+  0%, 100% {
+    transform: translateY(0) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-1deg);
+  }
+}
+
+/* Bonus: Add a subtle glitch effect on hover */
+.guinetik-screen aside:hover {
+  animation: floatText 6s ease-in-out infinite, 
+             glitch 0.3s linear infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(-1px, -1px); }
+  60% { transform: translate(1px, 1px); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+.guinetik-screen p {
+  clear: both; /* Prevent wrapping around floated element */
+  margin-top: 1rem; /* Add space between aside and paragraph */
+}
+
+.guinetik-screen strong {
+  color: white;
+}
+
+/* CRT Effects */
+.terminal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    rgba(0, 255, 255, 0.03) 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+}
+
+.terminal-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 20, 27, 0.7) 100%
+  );
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.brand-badge {
+  position: absolute;
+  bottom: 18%;
+  right: 15%;
+  color: #00c8c8;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Navigation - Desktop */
+.nav-buttons {
+  position: absolute;
+  right: 15%; /* Adjust this value until it looks right */
+  top: 50%; /* Adjust this value until vertically centered */
+  margin-top: -200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-button {
+  position: relative;
+  padding: 8px 15px;
+  background: linear-gradient(145deg, #003040, #002030);
+  color: #9eff9e;
+  border: none;
+  border-radius: 4px;
+  font-family: "Terminal", monospace;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #001a23, 0 3px 0 #004050,
+    inset 0 1px 2px rgba(0, 255, 255, 0.3), 2px 3px 5px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.nav-button::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  height: 30%;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 2px 2px 0 0;
+}
+
+.nav-button:hover {
+  background: linear-gradient(145deg, #004050, #003040);
+  color: #c8ffc8;
+  transform: translateY(-1px);
+}
+
+.nav-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #001a23, 0 2px 0 #004050,
+    inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.nav-button.active {
+  background: linear-gradient(145deg, #005060, #004050);
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive Styles */
+@media (max-width: 780px) {
+  body {
+    align-items: fl ex-start;
+  }
+
+  .mobile-header {
+    display: flex!important;
+  }
+
+  .terminal-container {
+    width: 100%;
+    filter: none;
+  }
+
+  .terminal-svg {
+    display: none;
+  }
+
+  .terminal-content {
+    position: relative;
+    width: 100%;
+    top: 14px;
+    left: 0;
+    bottom:0;
+    min-width: 100vw;
+    height: calc(100vh - 50px);
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .nav-buttons {
+    display: none;
+  }
+
+  .brand-badge {
+    right: 30px;
+    bottom: 30px;
+  }
+}
+/* Mobile Header - Hidden by default */
+.mobile-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: #002a38;
+  border-bottom: 1px solid #00c8c8;
+}
+
+.logo {
+  color: #9eff9e;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.hamburger {
+  width: 30px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  background-color: #9eff9e;
+  transition: all 0.3s ease;
+}
+
+/* Mobile Nav Menu - Hidden by default */
+.mobile-nav {
+  position: fixed;
+  top: 40px;
+  left: -250px;
+  width: 200px;
+  height: calc(100vh - 60px);
+  background-color: #002a38;
+  border-right: 1px solid #00c8c8;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-nav.open {
+  left: 0;
+}
+
+#bg {
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+}
+
+.content {
+  margin: 10px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Macrodata refining xD */
+#number-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.number {
+  position: relative;
+  color: rgba(158, 255, 158, 0.3);
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-out;
+  text-shadow: 0 0 5px rgba(158, 255, 158, 0.5);
+}
+
+.home-screen {
+  position: relative;
+}
+.page {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.page:not(.active) {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.page.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add this for a scanline wipe transition effect */
+@keyframes scanline-wipe {
+  0% {
+    height: 0%;
+    opacity: 0.8;
+  }
+  100% {
+    height: 100%;
+    opacity: 0;
+  }
+}
+
+.transition-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 200, 200, 0.8) 0%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+  animation: scanline-wipe 0.8s ease-in-out forwards;
+  display: none;
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.demo-folder {
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.folder {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden; /* Contains the pseudo-element */
+}
+
+/* Glow border animation */
+.folder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 200, 200, 0.8),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: borderGlow 4s linear infinite;
+  pointer-events: none; /* Don't interfere with clicks */
+  z-index: 0;
+}
+
+@keyframes borderGlow {
+  0% {
+    background-position: 200% 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -200% 0;
+    opacity: 0;
+  }
+}
+
+/* Make sure content stays above the glow */
+.folder-content {
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.7); /* Maintain background */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Enhanced folder tab */
+.folder-tab {
+  color: #00c8c8;
+  padding: 0 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px rgba(0, 200, 200, 0.5);
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 20, 20, 0.9);
+}
+
+/* Optional: Add subtle pulse to the tab */
+.folder-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 15px;
+  right: 15px;
+  height: 1px;
+  background: #00c8c8;
+  box-shadow: 0 0 3px #00c8c8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.demo-image {
+  min-width: 95%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  border: 1px solid #2a2a2a;
+  background: #000;
+  margin: 0 auto; /* Backup centering for non-flex scenarios */
+  display: block; /* Needed for margin auto to work */
+}
+
+.demo-description {
+  color: #aaa;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 5px;
+}
